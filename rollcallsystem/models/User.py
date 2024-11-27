@@ -1,7 +1,7 @@
 from typing import Any
 
 from sqlalchemy import Column, String
-from RollcallSystem.database import Base
+from rollcallsystem.database import Base
 
 
 class User(Base):

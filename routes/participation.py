@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from ParticipationSystem.exceptions.LoginException import LoginException
-from ParticipationSystem.models import Teacher, Student
+from participationsystem.exceptions.LoginException import LoginException
+from participationsystem.models import Teacher, Student
 
 
 router = APIRouter(prefix="/participation")
@@ -9,6 +9,10 @@ db = {}
 
 @router.get("/")
 async def root():
+    return {"message": "Hello participation."}
+
+@router.get("/login")
+async def login():
     return {"message": "Hello participation."}
 
 
