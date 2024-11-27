@@ -1,12 +1,16 @@
+from sqlalchemy import Column, Integer, ForeignKey, String
+
 from .Student import Student
 from .Teacher import Teacher
+from ..database import Base
 
 
-class Course:
-    def __init__(self, course_id: int, course_name: str, academic_year: int):
-        self.id: int = course_id
-        self.name: str = course_name
-        self.academic_year: int = academic_year
+class Course(Base):
+    __tablename__ = "Course"
+    course_id = Column(String, primary_key=True, autoincrement=True)
+    teacher_id = Column(String, ForeignKey("Teacher.TeacherID"), nullable=False)
+    name = Column(String, nullable=False)
+    academic_year = Column(Integer)
 
     def edit_student_information(self, student: Student):
         pass

@@ -1,11 +1,14 @@
+from sqlalchemy import Column, String
+
 from .User import User
 
 
 class Teacher(User):
-    def __init__(self, account: str, password: str, teacher_id: int, name: str):
-        super().__init__(account, password)
-        self.id: int = teacher_id
-        self.name: str = name
+    __tablename__ = 'Teacher'
+
+    id = Column(String, primary_key=True)
+    password = Column(String)
+    name = Column(String)
 
     def login(self):
         pass

@@ -1,11 +1,18 @@
+from sqlalchemy import Column, String
+
 from .User import User
 
 
 class Student(User):
-    def __init__(self, account: str, password: str, student_id: int, name: str):
-        super().__init__(account, password)
-        self.id: int = student_id
-        self.name: str = name
+    __tablename__ = 'student'
+
+    id = Column(String, primary_key=True)
+    name = Column(String)
+
+    def __init__(self, id: str, name: str, account: str, password: str):
+        super().__init__(account=account, password=password)
+        self.id = id
+        self.name = name
 
     def view_attendance_record(self):
         pass
