@@ -6,12 +6,15 @@ from .User import User
 class Teacher(User):
     __tablename__ = 'Teacher'
 
-    id = Column(String, primary_key=True)
-    password = Column(String)
+    # Add an explicit foreign key to link to the User table
+    teacher_id = Column(String, primary_key=True)
     name = Column(String)
 
-    def login(self):
-        pass
+    # Configure the inheritance
+    __mapper_args__ = {
+        'polymorphic_identity': 'teacher',
+        'inherit_condition': teacher_id == User.account
+    }
 
     def manage_course(self):
         pass
