@@ -6,15 +6,21 @@ from .User import User
 class Teacher(User):
     __tablename__ = 'Teacher'
 
-    # Add an explicit foreign key to link to the User table
-    teacher_id = Column(String, primary_key=True)
+    id = Column(String, primary_key=True)
     name = Column(String)
 
-    # Configure the inheritance
     __mapper_args__ = {
         'polymorphic_identity': 'teacher',
-        'inherit_condition': teacher_id == User.account
+        'inherit_condition': id == User.account
     }
+
+    def get_courses(self, db):
+        """
+        獲取教師所負責的課程
+        """
+        from .Course import Course
+        print(db.query(Course).filter_by(teacher_id=self.id).all())
+        return db.query(Course).filter_by(teacher_id=self.id).all()
 
     def manage_course(self):
         pass
