@@ -27,11 +27,25 @@ class Student(User):
         from .Course import Course
         return db.query(Course).filter_by(student_id=self.id).all()
 
-    def view_attendance_record(self):
+    def get_attendance_record(self, db, course_id: str = None, start_date: str = None, end_date: str = None):
         """
-        View attendance record
+        View attendance record, with optional filters for course, date range, and attendance status
 
-        Returns:
-            list: Student attendance record
+        :param db: SQLAlchemy session
+        :param course_id: Filter by course ID (optional)
+        :param start_date: Filter by start date (optional)
+        :param end_date: Filter by end date (optional)
+        :return: List of attendance records matching the criteria
         """
-        return self.attendance_records
+        from .AttendanceRecord import AttendanceRecord
+        query = db.query(AttendanceRecord).filter_by(student_id=self.id)
+
+        # Add filters if provided
+        if course_id:
+            query = query.filter_by(course_id=course_id)
+        if start_date:
+            query = query.filter(AttendanceRecord.attendance_date >= start_date)
+        if end_date:
+            query = query.filter(AttendanceRecord.attendance_date <= end_date)
+
+        return query.all()

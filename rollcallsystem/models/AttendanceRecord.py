@@ -16,12 +16,3 @@ class AttendanceRecord(Base):
 
     student = relationship("Student", back_populates="attendance_records")
     course = relationship("Course", back_populates="attendance_records")
-
-    def update_attendance_status(self, attendance_status: bool):
-        """
-        update attendance status
-
-        Args:
-            attendance_status (bool): new status
-        """
-        self.attendance_status = attendance_status
