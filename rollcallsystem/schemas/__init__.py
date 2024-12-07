@@ -1,1 +1,1 @@
-from .LoginRequest import LoginRequest
+from .auth import *
