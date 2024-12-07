@@ -38,3 +38,21 @@ async def get_teacher_courses(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Internal server error: {str(e)}"
         )
+
+@router.post("/addStudentToCourse")
+async def add_student_to_course(
+        course_id: str,
+        student_id: str,
+        semester: str,
+        current_user: Teacher = Depends(get_current_user),  # 驗證 Token 並取得教師身份
+        db: Session = Depends(get_db)
+):
+    """
+    將學生加入課程的選課記錄
+    """
+    try:
+        result = current_user.add_student_to_course_enrollment(db, course_id, student_id, semester)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

@@ -14,6 +14,7 @@ class Course(Base):
     academic_year = Column(Integer)
 
     attendance_records = relationship("AttendanceRecord", back_populates="course")
+    course_enrollments = relationship("CourseEnrollment", back_populates="course")
 
     def edit_student_information(self, student: Student):
         pass

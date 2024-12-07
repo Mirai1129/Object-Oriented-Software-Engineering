@@ -11,11 +11,21 @@ class Student(User):
     name = Column(String)
 
     attendance_records = relationship("AttendanceRecord", back_populates="student")
+    course_enrollments = relationship("CourseEnrollment", back_populates="student")
 
     __mapper_args__ = {
         'polymorphic_identity': 'student',
         'inherit_condition': id == User.account
     }
+
+    def get_courses(self, db):
+        """
+        get Student's courses
+        :param db:
+        :return:
+        """
+        from .Course import Course
+        return db.query(Course).filter_by(student_id=self.id).all()
 
     def view_attendance_record(self):
         """
