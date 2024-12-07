@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from rollcallsystem import get_db, Student, get_current_user
+from rollcallsystem import get_db, Student, get_current_user, Course, AttendanceRecord
 
 router = APIRouter()
 
@@ -41,5 +41,36 @@ async def get_attendance(
     try:
         attendance_records = student.get_attendance_record(db, course_id, start_date, end_date)
         return {"attendance_records": attendance_records}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.put("/updateAttendance/{course_id}/{student_id}")
+async def update_attendance(
+        course_id: str,
+        student_id: str,
+        db: Session = Depends(get_db),
+        current_user: Student = Depends(get_current_user)
+):
+    if current_user.id != student_id:
+        raise HTTPException(status_code=403,
+                            detail="You do not have permission to access this student's attendance records")
+
+    course = db.query(Course).filter_by(course_id=course_id).first()
+
+    if not course:
+        raise HTTPException(status_code=404, detail="Course not found")
+
+    student = db.query(Student).filter_by(id=student_id).first()
+
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    if not course.is_rollcall_opened:
+        raise HTTPException(status_code=404, detail="This course's rollcall not opened")
+
+    try:
+        response = current_user.update_attendance_record(db, course_id, student_id)
+        return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

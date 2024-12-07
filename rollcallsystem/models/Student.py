@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from sqlalchemy import Column, String
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Session
 
 from .User import User
 
@@ -27,7 +29,7 @@ class Student(User):
         from .Course import Course
         return db.query(Course).filter_by(student_id=self.id).all()
 
-    def get_attendance_record(self, db, course_id: str = None, start_date: str = None, end_date: str = None):
+    def get_attendance_record(self, db: Session, course_id: str = None, start_date: str = None, end_date: str = None):
         """
         View attendance record, with optional filters for course, date range, and attendance status
 
@@ -49,3 +51,26 @@ class Student(User):
             query = query.filter(AttendanceRecord.attendance_date <= end_date)
 
         return query.all()
+
+    def update_attendance_record(self, db: Session, course_id: str, student_id: str):
+        from .AttendanceRecord import AttendanceRecord
+
+        try:
+            attendance_date = datetime.today()
+            attendance_status = True
+            modified_time = datetime.now()
+
+            attendance_record = AttendanceRecord(
+                student_id=student_id,
+                course_id=course_id,
+                attendance_date=attendance_date,
+                attendance_status=attendance_status,
+                modified_time=modified_time
+            )
+
+            db.add(attendance_record)
+            db.commit()
+            return {"message": "New Attendance record updated."}
+        except Exception as e:
+            db.rollback()
+            raise Exception(f"Error updating new attendance: {str(e)}")
