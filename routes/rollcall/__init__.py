@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
+from .attendancerecord import router as attendancerecord_router
 from .course import router as teacher_router
 from .rollcall import router as rollcall_router
-from .attendancerecord import router as attendancerecord_router
 
 router = APIRouter(prefix="/rollcall")
 

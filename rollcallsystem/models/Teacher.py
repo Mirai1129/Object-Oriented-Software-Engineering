@@ -1,4 +1,7 @@
+from datetime import datetime, date
+
 from sqlalchemy import Column, String
+from sqlalchemy.orm import Session
 
 from .User import User
 
@@ -84,3 +87,55 @@ class Teacher(User):
         except Exception as e:
             db.rollback()  # 發生錯誤時回滾變更
             raise Exception(f"Error adding new course: {str(e)}")
+
+    def get_attendance_records(self, db: Session, course_id: str, student_id: str):
+        from .AttendanceRecord import AttendanceRecord
+
+        try:
+            attendance_record = db.query(AttendanceRecord).filter_by(course_id=course_id, student_id=student_id).all()
+            if attendance_record:
+                return attendance_record
+        except Exception as e:
+            db.rollback()
+            raise Exception(f"Error getting attendance records: {str(e)}")
+
+    def edit_attendance_record(self,
+                               db: Session,
+                               course_id: str,
+                               student_id: str,
+                               attendance_date: date = None,
+                               attendance_status: bool = None
+                               ):
+        from .AttendanceRecord import AttendanceRecord
+
+        try:
+            # 設定修改時間
+            modified_time = datetime.now()
+
+            # 查詢是否已經存在該學生和該課程的出勤紀錄
+            attendance_record = db.query(AttendanceRecord).filter_by(
+                student_id=student_id, course_id=course_id, attendance_date=attendance_date
+            ).first()
+
+            # 如果已經有紀錄，則進行更新
+            if attendance_record:
+                attendance_record.attendance_status = attendance_status
+                attendance_record.modified_time = modified_time  # 更新修改時間
+                db.commit()
+                return {"message": "Attendance record updated."}
+            else:
+                # 如果該紀錄不存在，則新增一條
+                attendance_record = AttendanceRecord(
+                    student_id=student_id,
+                    course_id=course_id,
+                    attendance_date=datetime.today(),
+                    attendance_status=attendance_status,
+                    modified_time=modified_time
+                )
+                db.add(attendance_record)
+                db.commit()
+                return {"message": "New Attendance record created."}
+
+        except Exception as e:
+            db.rollback()
+            raise Exception(f"Error updating attendance record: {str(e)}")
