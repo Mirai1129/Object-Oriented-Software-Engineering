@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 
 from .Student import Student
@@ -8,10 +8,10 @@ from ..database import Base
 
 class Course(Base):
     __tablename__ = "Course"
-    course_id = Column(String, primary_key=True, autoincrement=True)
+    course_id = Column(String, primary_key=True)
     teacher_id = Column(String, ForeignKey("Teacher.id"), nullable=False)
     name = Column(String, nullable=False)
-    academic_year = Column(Integer)
+    academic_year = Column(String, nullable=False)
 
     attendance_records = relationship("AttendanceRecord", back_populates="course")
     course_enrollments = relationship("CourseEnrollment", back_populates="course")

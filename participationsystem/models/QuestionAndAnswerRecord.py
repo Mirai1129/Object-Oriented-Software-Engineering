@@ -6,6 +6,7 @@ from .Student import Student
 
 class QuestionAndAnswerRecord:
     __tablename__ = "QuestionAndAnswerRecord"
+
     def __init__(self, record_id: int, student: Student, course: Course, date: datetime = datetime.now()):
         self.id: int = record_id
         self.student: Student = student

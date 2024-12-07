@@ -39,6 +39,7 @@ async def get_teacher_courses(
             detail=f"Internal server error: {str(e)}"
         )
 
+
 @router.post("/addStudentToCourse")
 async def add_student_to_course(
         course_id: str,
@@ -56,3 +57,23 @@ async def add_student_to_course(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@router.post("/addNewCourse")
+async def add_new_course_endpoint(
+        course_data: dict,
+        current_user: Teacher = Depends(get_current_user),  # 驗證 Token 並取得教師身份
+        db: Session = Depends(get_db)
+):
+    """
+    新增課程，只有授權的教師可以新增課程
+    """
+    try:
+        # 確認教師是否有權限新增課程（例如檢查教師身份或角色）
+        # 如果需要額外檢查，可以加上額外的邏輯來驗證教師身份
+
+        # 呼叫新增課程的邏輯
+        response = current_user.add_new_course(db, course_data['course_id'], course_data['course_name'],
+                                               course_data['semester'])
+        return response
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

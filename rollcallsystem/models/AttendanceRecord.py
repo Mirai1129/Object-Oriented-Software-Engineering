@@ -9,7 +9,7 @@ class AttendanceRecord(Base):
 
     record_id = Column(Integer, primary_key=True)
     course_id = Column(Integer, ForeignKey('Course.course_id'))
-    student_id = Column(String, ForeignKey('Student.id'))  # 注意这里改为 String
+    student_id = Column(String, ForeignKey('Student.id'))
     attendance_date = Column(Date)
     attendance_status = Column(Boolean)
     modified_time = Column(DateTime)

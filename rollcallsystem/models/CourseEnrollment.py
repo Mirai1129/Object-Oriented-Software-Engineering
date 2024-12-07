@@ -9,7 +9,7 @@ class CourseEnrollment(Base):
 
     id = Column(Integer, primary_key=True)
     course_id = Column(String, ForeignKey('Course.course_id'))
-    student_id = Column(String, ForeignKey('Student.id'))  # 注意这里改为 String
+    student_id = Column(String, ForeignKey('Student.id'))
     semester = Column(String)
 
     student = relationship("Student", back_populates="course_enrollments")
