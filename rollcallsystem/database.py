@@ -1,11 +1,11 @@
-import os
 import logging
+import os
+
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# 配置日志
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -23,8 +23,10 @@ logger.info(f"Host: {HOST}")
 logger.info(f"Port: {PORT}")
 logger.info(f"Database: {DATABASE}")
 
+
 def get_database_url():
     return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
+
 
 try:
     url = get_database_url()
@@ -40,6 +42,7 @@ try:
 except Exception as e:
     logger.error(f"database connection is failed: {e}")
     raise
+
 
 def get_db():
     db = SessionLocal()
