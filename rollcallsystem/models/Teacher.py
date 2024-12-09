@@ -109,7 +109,6 @@ class Teacher(User):
         from .AttendanceRecord import AttendanceRecord
 
         try:
-            # 設定修改時間
             modified_time = datetime.now()
 
             # 查詢是否已經存在該學生和該課程的出勤紀錄
@@ -120,7 +119,7 @@ class Teacher(User):
             # 如果已經有紀錄，則進行更新
             if attendance_record:
                 attendance_record.attendance_status = attendance_status
-                attendance_record.modified_time = modified_time  # 更新修改時間
+                attendance_record.modified_time = modified_time
                 db.commit()
                 return {"message": "Attendance record updated."}
             else:

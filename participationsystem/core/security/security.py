@@ -9,12 +9,12 @@ from jose import jwt, JWTError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 
-from rollcallsystem.database import get_db
-from rollcallsystem.models import User, Teacher, Student
+from participationsystem.database import get_db
+from participationsystem.models import User, Teacher, Student
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("ROLLCALL_SECRET")
+SECRET_KEY = os.getenv("PARTICIPATION_SECRET")  # Replace with a secure, randomly generated secret key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -89,6 +89,6 @@ def get_current_user(
     # 根據帳號查詢使用者
     user = db.query(User).filter(User.account == account).first()
     if user and user.role == 1:
-        return Teacher(id=user.account, account=user.account, password=user.password)  # 使用正確的初始化
+        return Teacher(teacher_id=user.account, user_id=user.account, password=user.password)  # 使用正確的初始化
     else:
         return Student(id=user.account, account=user.account, password=user.password)

@@ -1,25 +1,21 @@
-from typing import List
-
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.orm import relationship
 
-from .Course import Course
-from .User import User
+from . import CourseEnrollment
+from ..database import Base
 
-class Student(User):
-    __tablename__ = "students"
 
-    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    student_id = Column(Integer, unique=True)
-    name = Column(String)
+class Student(Base):
+    __tablename__ = "Student"
 
-    # Relationship with courses can be added later
-    courses = relationship("CourseModel", secondary="student_courses")
+    student_id = Column(String(20), primary_key=True)
+    user_id = Column(String(50), ForeignKey('User.account'), nullable=False, unique=True)
+    name = Column(String(50), nullable=False)
 
-    __mapper_args__ = {
-        "polymorphic_identity": "student"
-    }
-
+    user = relationship("User", back_populates="students")
+    course_enrollments = relationship("CourseEnrollment", back_populates="student")
+    participation_grades = relationship("ParticipationGrade", back_populates="student")
+    question_answer_records = relationship("QuestionAndAnswerRecord", back_populates="student")
 
     def login(self):
         pass
@@ -27,5 +23,6 @@ class Student(User):
     def view_question_and_answer_record(self):
         pass
 
-    def enroll_course(self, course: 'Course'):
-        self.courses.append(course)
+    def enroll_course(self, course):
+        enrollment = CourseEnrollment(course_id=course.course_id, student_id=self.student_id)
+        self.course_enrollments.append(enrollment)

@@ -1,25 +1,24 @@
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import relationship
 
-from .User import User
+from ..database import Base
 
 
-class Teacher(User):
-    class TeacherModel(User):
-        __tablename__ = "teachers"
+class Teacher(Base):
+    __tablename__ = "Teacher"
 
-        id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-        teacher_id = Column(Integer, unique=True)
-        name = Column(String)
+    teacher_id = Column(String(20), primary_key=True)
+    user_id = Column(String(50), ForeignKey('User.account'), nullable=False, unique=True)
+    specialization = Column(String(100), nullable=False)
+    name = Column(String(50), nullable=False)
 
-        __mapper_args__ = {
-            "polymorphic_identity": "teacher"
-        }
+    user = relationship("User", back_populates="teachers")
+    courses = relationship("Course", back_populates="teacher")
 
-    def login(self):
-        pass
+    # 可以新增及編輯學生發言加分分數，全權控制課堂發言紀錄
 
-    def manage_course(self):
-        pass
+    def add_student_participation_record(self):
+        from .Course import Course
 
     def manage_question_and_answer_record(self):
         pass

@@ -1,20 +1,15 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, String, ForeignKey, Integer
+from sqlalchemy.orm import relationship
 
 from ..database import Base
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "User"
 
-    id = Column(Integer, primary_key=True, index=True)
-    account = Column(String, unique=True, index=True)
-    password = Column(String)
-    role = Column(String)
+    account = Column(String(50), primary_key=True)
+    password = Column(String(255), nullable=False)
+    role = Column(Integer, nullable=False)
 
-    # Discriminator for polymorphic inheritance
-    type = Column(String(50))
-
-    __mapper_args__ = {
-        "polymorphic_identity": "user",
-        "polymorphic_on": type
-    }
+    students = relationship("Student", back_populates="user")
+    teachers = relationship("Teacher", back_populates="user")
