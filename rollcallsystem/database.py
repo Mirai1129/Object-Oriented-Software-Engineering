@@ -24,7 +24,7 @@ def get_database_url():
 
 try:
     url = get_database_url()
-    engine = create_engine(url, echo=True)  # echo=True will show all sql operation
+    engine = create_engine(url, echo=False)  # echo=True will show all sql operation
 
     with engine.connect() as connection:
         logger.info("Database connection succeed")
