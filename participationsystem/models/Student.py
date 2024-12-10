@@ -1,25 +1,18 @@
-from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from ..database import Base
+from .User import User
 
 
-class Student(Base):
+class Student(User):
     __tablename__ = "Student"
 
-    student_id = Column(String(20), primary_key=True)
-    user_id = Column(String(50), ForeignKey('User.account'), nullable=False, unique=True)
+    id = Column(String(20), primary_key=True)
     name = Column(String(50), nullable=False)
 
-    user = relationship("User", back_populates="students")
+    __mapper_args__ = {
+        'polymorphic_identity': 'student',
+        'inherit_condition': id == User.account
+    }
+
     participation_grades = relationship("ParticipationGrade", back_populates="student")
-    question_answer_records = relationship("QuestionAndAnswerRecord", back_populates="student")
-
-    def login(self):
-        pass
-
-    def view_question_and_answer_record(self):
-        pass
-
-    def enroll_course(self, course):
-        pass

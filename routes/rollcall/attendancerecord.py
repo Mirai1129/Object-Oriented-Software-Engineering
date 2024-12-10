@@ -15,23 +15,29 @@ async def get_attendance(
         start_date: date = None,
         end_date: date = None,
         db: Session = Depends(get_db),
-        current_user: Student = Depends(get_current_user)  # 確認當前用戶是否為學生或教師
+        current_user: Student = Depends(get_current_user)
 ):
     """
-    獲取學生的考勤記錄
-    :param student_id: 學生ID
-    :param course_id: 選填，課程ID（如果需要過濾）
-    :param start_date: 選填，開始日期（如果需要過濾）
-    :param end_date: 選填，結束日期（如果需要過濾）
-    :param db: SQLAlchemy會話
-    :param current_user: 驗證使用者身份（學生或教師）
-    :return: 學生的考勤記錄
+    Get attendance records for a specific student.
+
+    Args:
+        student_id: The student's unique ID.
+        course_id: Optional, the course ID to filter attendance by.
+        start_date: Optional, the start date to filter attendance records.
+        end_date: Optional, the end date to filter attendance records.
+        db: SQLAlchemy session dependency for database interaction.
+        current_user: The current logged-in student object.
+
+    Returns:
+        A list of attendance records for the student, filtered by the provided parameters.
+
+    Raises:
+        HTTPException: If the current user does not have permission to access the student's attendance records.
     """
     if current_user.id != student_id:
         raise HTTPException(status_code=403,
                             detail="You do not have permission to access this student's attendance records")
 
-    # 從學生實體中調用 `get_attendance_record` 方法
     student = db.query(Student).filter_by(id=student_id).first()
 
     if not student:
@@ -51,6 +57,21 @@ async def update_attendance(
         db: Session = Depends(get_db),
         current_user: Student = Depends(get_current_user)
 ):
+    """
+    Update attendance record for a student in a specific course.
+
+    Args:
+        course_id: The unique identifier of the course.
+        student_id: The unique identifier of the student.
+        db: SQLAlchemy session dependency for database interaction.
+        current_user: The current logged-in student object.
+
+    Returns:
+        A response indicating the success of the update.
+
+    Raises:
+        HTTPException: If the current user is not authorized or if any errors occur during the update.
+    """
     if current_user.id != student_id:
         raise HTTPException(status_code=403,
                             detail="You do not have permission to access this student's attendance records")
@@ -66,7 +87,7 @@ async def update_attendance(
         raise HTTPException(status_code=404, detail="Student not found")
 
     if not course.is_rollcall_opened:
-        raise HTTPException(status_code=404, detail="This course's rollcall not opened")
+        raise HTTPException(status_code=404, detail="This course's rollcall has not been opened")
 
     try:
         response = current_user.update_attendance_record(db, course_id, student_id)
@@ -82,6 +103,21 @@ async def get_attendance(
         db: Session = Depends(get_db),
         current_user: Teacher = Depends(get_current_user)
 ):
+    """
+    Get attendance records for a specific student in a specific course by a teacher.
+
+    Args:
+        course_id: The unique identifier of the course.
+        student_id: The unique identifier of the student.
+        db: SQLAlchemy session dependency for database interaction.
+        current_user: The current logged-in teacher object.
+
+    Returns:
+        A list of attendance records for the student in the specified course.
+
+    Raises:
+        HTTPException: If the teacher or student is not found.
+    """
     teacher = db.query(Teacher).filter_by(id=current_user.id).first()
     if not teacher:
         raise HTTPException(status_code=404, detail="Teacher not found")
@@ -97,6 +133,21 @@ async def update_attendance(
         db: Session = Depends(get_db),
         current_user: Teacher = Depends(get_current_user)
 ):
+    """
+    Edit the attendance record for a student in a specific course by a teacher.
+
+    Args:
+        course_id: The unique identifier of the course.
+        student_id: The unique identifier of the student.
+        db: SQLAlchemy session dependency for database interaction.
+        current_user: The current logged-in teacher object.
+
+    Returns:
+        A response indicating the success of the update.
+
+    Raises:
+        HTTPException: If the teacher is not authorized or if any errors occur during the update.
+    """
     if current_user.id != student_id:
         raise HTTPException(status_code=403,
                             detail="You do not have permission to access this student's attendance records")
@@ -112,7 +163,7 @@ async def update_attendance(
         raise HTTPException(status_code=404, detail="Teacher not found")
 
     if not course.is_rollcall_opened:
-        raise HTTPException(status_code=404, detail="This course's rollcall not opened")
+        raise HTTPException(status_code=404, detail="This course's rollcall has not been opened")
 
     try:
         response = current_user.edit_attendance_record(db, course_id, student_id)

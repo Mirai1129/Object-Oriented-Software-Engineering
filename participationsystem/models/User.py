@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, ForeignKey, Integer
-from sqlalchemy.orm import relationship
+from typing import Any
+
+from sqlalchemy import Column, String, Integer
 
 from ..database import Base
 
@@ -11,5 +12,11 @@ class User(Base):
     password = Column(String(255), nullable=False)
     role = Column(Integer, nullable=False)
 
-    students = relationship("Student", back_populates="user")
-    teachers = relationship("Teacher", back_populates="user")
+    __mapper_args__ = {
+        'polymorphic_identity': 'user',
+    }
+
+    def __init__(self, account: str, password: str, **kw: Any):
+        super().__init__(**kw)
+        self.account = account
+        self.password = password

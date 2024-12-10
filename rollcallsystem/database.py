@@ -18,7 +18,7 @@ PORT = os.getenv("PORT")
 DATABASE = os.getenv("ROLLCALL_DATABASE")
 
 
-def get_database_url():
+def get_database_url() -> str:
     return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
 

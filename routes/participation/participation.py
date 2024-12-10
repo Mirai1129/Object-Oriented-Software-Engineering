@@ -14,6 +14,6 @@ async def root():
 @router.get("/login")
 async def login_page(request: Request):
     """
-    顯示登入頁面
+    show the login page
     """
     return templates.TemplateResponse("login.html", {"request": request})

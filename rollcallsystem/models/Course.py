@@ -2,8 +2,6 @@ from sqlalchemy import Column, ForeignKey, String
 from sqlalchemy.dialects.mssql import TINYINT
 from sqlalchemy.orm import relationship
 
-from .Student import Student
-from .Teacher import Teacher
 from ..database import Base
 
 
@@ -17,9 +15,3 @@ class Course(Base):
 
     attendance_records = relationship("AttendanceRecord", back_populates="course")
     course_enrollments = relationship("CourseEnrollment", back_populates="course")
-
-    def edit_student_information(self, student: Student):
-        pass
-
-    def edit_course_information(self, teacher: Teacher):
-        pass
