@@ -70,7 +70,13 @@ ROLLCALL_SECRET=RollcallCoolSecret
 PARTICIPATION_SECRET=ParticipationCoolSecret
 ```
 
-### 安裝步驟
+### 安裝步驟(With Docker)
+
+```bash
+docker compose up -d
+```
+
+### 安裝步驟(Without Docker)
 
 1. 克隆倉庫
 

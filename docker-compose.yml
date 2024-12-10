@@ -6,33 +6,37 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       USERNAME: root
-      PASSWORD: 0000
+      PASSWORD: "0000"
       HOST: mysql
       PORT: 3306
       ROLLCALL_DATABASE: Rollcall
       PARTICIPATION_DATABASE: Participation
       ROLLCALL_SECRET: RollcallCoolSecret
       PARTICIPATION_SECRET: ParticipationCoolSecret
-
     networks:
       - app-network
 
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_ROOT_PASSWORD: "0000"
       MYSQL_DATABASE: OOSE
     volumes:
-      - ./participationsystem/database.sql:/docker-entrypoint-initdb.d/init1.sql
-      - ./rollcallsystem/db1.sql:/docker-entrypoint-initdb.d/init2.sql
+      - ./init.sql:/docker-entrypoint-initdb.d/init1.sql
     ports:
-      - "3311:3306"
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "--silent" ]
+      interval: 5s
+      timeout: 3s
+      retries: 2
+      start_period: 0s
     networks:
       - app-network
 
 networks:
   app-network:
-    driver: bridge

@@ -73,7 +73,13 @@ ROLLCALL_SECRET=RollcallCoolSecret
 PARTICIPATION_SECRET=ParticipationCoolSecret
 ```
 
-### Installation Steps
+### Installation Steps(With Docker)
+
+```bash
+docker compose up -d
+```
+
+### Installation Steps(Without Docker)
 
 1. Clone the repository
 
