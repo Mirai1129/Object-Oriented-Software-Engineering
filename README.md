@@ -1,79 +1,107 @@
-# Rollcall System
+# Object-Oriented Software Engineering Course Project: Interactive Classroom Management System
 
-Rollcall is a student attendance management system based on MySQL and FastAPI. This system allows teachers and students
-to view and update attendance records, and provides management functions for related data. The system can be used in
-schools or other institutions to manage course attendance.
+## Project Overview
 
-## Table of Contents
+This project is a comprehensive classroom management system developed as part of an Object-Oriented Software Engineering
+course. The system consists of two primary subsystems:
 
-- [Introduction](#introduction)
-- [Technology Stack](#technology-stack)
-- [Installation and Running](#installation-and-running)
-- [Feature Description](#feature-description)
-- [API Documentation](#api-documentation)
-- [Database Backup and Restoration](#database-backup-and-restoration)
-- [License](#license)
+1. Rollcall System: A digital attendance tracking solution for monitoring student presence during classes.
+2. Participation System: An interactive classroom engagement platform that allows teachers to ask questions, record
+   student
+   responses, and track participation grades.
 
-## Introduction
+## Key Features
 
-The Rollcall system provides the following basic functions:
+### Rollcall System
 
-- Student login and attendance record viewing
-- Teachers can view and update student attendance records
-- Filter attendance records by course, date range, and other conditions
+* Digital attendance tracking
+* Real-time student check-in
+* Attendance record management
+* Detailed attendance reports
 
-The backend of this system is developed using **FastAPI**, and the frontend can be any application that needs to
-interact with the API, whether web or mobile.
+### Participation System
 
-## Technology Stack
+* In-class interactive questioning
+* Response tracking
+* Participation grade recording
+* Performance analytics
 
-- **Backend**: FastAPI (Python)
-- **Database**: MySQL
-- **ORM**: SQLAlchemy
-- **Authentication Method**: JWT (JSON Web Token)
+### Technology Stack
 
-## Installation and Running
+* Backend Framework: FastAPI
+* Database: MySQL
+* ORM: SQLAlchemy
+* Authentication: JWT (JSON Web Token)
+* Password Management: Passlib (bcrypt)
+* Environment Configuration: Python-dotenv
 
-### 1. Clone the Project
+### System Architecture
+
+The project follows object-oriented design principles, separating concerns into distinct modules for:
+
+* User management
+* Authentication
+* Attendance tracking
+* Classroom participation
+* Grading and reporting
+
+## Installation and Setup
+
+### Prerequisites
+
+* Python 3.8+
+* MySQL
+* pip (Python package manager)
+
+### Database Initialization
+The project includes an `init.sql` script in the root directory for database setup.
+
+### Environment Configuration
+Create a `.env` file with the following configuration:
+
+```bash
+# Database settings
+USERNAME=your mysql username
+PASSWORD=your mysql password
+HOST=your mysql host
+PORT=your mysql port
+ROLLCALL_DATABASE=Rollcall
+PARTICIPATION_DATABASE=Participation
+
+# Secrets
+ROLLCALL_SECRET=RollcallCoolSecret
+PARTICIPATION_SECRET=ParticipationCoolSecret
+```
+
+### Installation Steps
+
+1. Clone the repository
 
 ```bash
 git clone https://github.com/Mirai1129/Object-Oriented-Software-Engineering.git
+cd Object-Oriented-Software-Engineering
 ```
 
-### 2. Install Dependencies
-
-Install Python dependencies using pip:
+2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Configure Database
+3. Initialize database
 
-Ensure that your MySQL database is installed and running. You can create a new database to store Rollcall system data:
-
-```sql
-CREATE
-DATABASE rollcall;
+```bash
+# Use the provided init.sql script
+mysql -u root -p < init.sql
 ```
 
-### 4. Set Environment Variables
-
-Set database configuration and key environment variables. You can configure the following variables in the `.env` file:
-
-```ini
-USERNAME = your database username
-PASSWORD = your database password
-HOST = your database host
-PORT = your database port
-ROLLCALL_DATABASE = Rollcall
-PARTICIPATION_DATABASE = Participation
-```
-
-### 5. Start FastAPI Service
-
-Start the FastAPI service, which will run by default at http://127.0.0.1:8000:
+4. Start the application
 
 ```bash
 uvicorn main:app --reload
 ```
+
+## API Documentation
+
+### Explore the API endpoints via Swagger UI at:
+`http://127.0.0.1:8000/docs`
