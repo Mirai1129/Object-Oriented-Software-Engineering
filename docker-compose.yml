@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    environment:
+      USERNAME: root
+      PASSWORD: 0000
+      HOST: mysql
+      PORT: 3306
+      ROLLCALL_DATABASE: Rollcall
+      PARTICIPATION_DATABASE: Participation
+      ROLLCALL_SECRET: RollcallCoolSecret
+      PARTICIPATION_SECRET: ParticipationCoolSecret
+
+    networks:
+      - app-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: 0000
+      MYSQL_DATABASE: OOSE
+    volumes:
+      - ./participationsystem/database.sql:/docker-entrypoint-initdb.d/init1.sql
+      - ./rollcallsystem/db1.sql:/docker-entrypoint-initdb.d/init2.sql
+    ports:
+      - "3311:3306"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
