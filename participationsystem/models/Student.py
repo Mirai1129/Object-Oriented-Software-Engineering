@@ -1,31 +1,18 @@
-from typing import List
-
-from sqlalchemy import Column, Integer, ForeignKey, String
+from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
-from .Course import Course
 from .User import User
 
+
 class Student(User):
-    __tablename__ = "students"
+    __tablename__ = "Student"
 
-    id = Column(Integer, ForeignKey('users.id'), primary_key=True)
-    student_id = Column(Integer, unique=True)
-    name = Column(String)
-
-    # Relationship with courses can be added later
-    courses = relationship("CourseModel", secondary="student_courses")
+    id = Column(String(20), primary_key=True)
+    name = Column(String(50), nullable=False)
 
     __mapper_args__ = {
-        "polymorphic_identity": "student"
+        'polymorphic_identity': 'student',
+        'inherit_condition': id == User.account
     }
 
-
-    def login(self):
-        pass
-
-    def view_question_and_answer_record(self):
-        pass
-
-    def enroll_course(self, course: 'Course'):
-        self.courses.append(course)
+    participation_grades = relationship("ParticipationGrade", back_populates="student")

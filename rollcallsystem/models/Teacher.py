@@ -19,23 +19,33 @@ class Teacher(User):
 
     def get_courses(self, db):
         """
-        獲取教師所負責的課程
+        Get the courses taught by the teacher.
+
+        Args:
+            db (Session): The database session to query courses.
+
+        Returns:
+            list: A list of courses assigned to the teacher.
         """
         from .Course import Course
         return db.query(Course).filter_by(teacher_id=self.id).all()
 
     def add_student_to_course_enrollment(self, db, course_id: str, student_id: str, semester: str):
         """
-        將學生加入課程選課記錄
-        :param db: SQLAlchemy Session
-        :param course_id: 課程ID
-        :param student_id: 學生ID
-        :param semester: 學期資訊
+        Add a student to a course enrollment record.
+
+        Args:
+            db (Session): The database session to query the database.
+            course_id (str): The course ID.
+            student_id (str): The student ID.
+            semester (str): The semester information.
+
+        Returns:
+            dict: A message indicating the result of the operation.
         """
         from .CourseEnrollment import CourseEnrollment
 
         try:
-            # 檢查是否已存在相同的選課記錄
             is_existing_enrollment = db.query(CourseEnrollment).filter_by(
                 course_id=course_id,
                 student_id=student_id,
@@ -50,22 +60,27 @@ class Teacher(User):
                 student_id=student_id,
                 semester=semester
             )
-            db.add(enrollment)  # 新增實體到資料庫會話
-            db.commit()  # 提交變更
+            db.add(enrollment)
+            db.commit()
             return {"message": "Student successfully added to course enrollment."}
         except Exception as e:
-            db.rollback()  # 發生錯誤時回滾變更
+            db.rollback()
             raise Exception(f"Error adding student to course enrollment: {str(e)}")
 
     def add_new_course(self, db, course_id: str, course_name: str, semester: str):
         """
-        新增課程
-        :param db: SQLAlchemy Session
-        :param course_id: 課程ID
-        :param course_name: 課程名稱
-        :param semester: 學期資訊
+        Add a new course.
+
+        Args:
+            db (Session): The database session to query the database.
+            course_id (str): The course ID.
+            course_name (str): The name of the course.
+            semester (str): The semester information.
+
+        Returns:
+            dict: A message indicating the result of the operation.
         """
-        from .Course import Course  # 匯入課程模型
+        from .Course import Course
 
         try:
             is_existing_course = db.query(Course).filter_by(course_id=course_id).first()
@@ -85,10 +100,21 @@ class Teacher(User):
             return {"message": "New course successfully added."}
 
         except Exception as e:
-            db.rollback()  # 發生錯誤時回滾變更
+            db.rollback()
             raise Exception(f"Error adding new course: {str(e)}")
 
     def get_attendance_records(self, db: Session, course_id: str, student_id: str):
+        """
+        Get the attendance records for a specific student in a specific course.
+
+        Args:
+            db (Session): The database session to query the database.
+            course_id (str): The course ID.
+            student_id (str): The student ID.
+
+        Returns:
+            list: A list of attendance records for the given student in the course.
+        """
         from .AttendanceRecord import AttendanceRecord
 
         try:
@@ -106,25 +132,34 @@ class Teacher(User):
                                attendance_date: date = None,
                                attendance_status: bool = None
                                ):
+        """
+        Edit or create an attendance record for a student in a course.
+
+        Args:
+            db (Session): The database session to query the database.
+            course_id (str): The course ID.
+            student_id (str): The student ID.
+            attendance_date (date, optional): The date of the attendance. Defaults to None.
+            attendance_status (bool, optional): The attendance status (True for present, False for absent). Defaults to None.
+
+        Returns:
+            dict: A message indicating the result of the operation.
+        """
         from .AttendanceRecord import AttendanceRecord
 
         try:
-            # 設定修改時間
             modified_time = datetime.now()
 
-            # 查詢是否已經存在該學生和該課程的出勤紀錄
             attendance_record = db.query(AttendanceRecord).filter_by(
                 student_id=student_id, course_id=course_id, attendance_date=attendance_date
             ).first()
 
-            # 如果已經有紀錄，則進行更新
             if attendance_record:
                 attendance_record.attendance_status = attendance_status
-                attendance_record.modified_time = modified_time  # 更新修改時間
+                attendance_record.modified_time = modified_time
                 db.commit()
                 return {"message": "Attendance record updated."}
             else:
-                # 如果該紀錄不存在，則新增一條
                 attendance_record = AttendanceRecord(
                     student_id=student_id,
                     course_id=course_id,

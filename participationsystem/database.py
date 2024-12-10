@@ -1,3 +1,4 @@
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -5,10 +6,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# 加載 .env 文件
-load_dotenv()
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# 從環境變量讀取
+load_dotenv(override=True)
+
 USERNAME = os.getenv("USERNAME")
 PASSWORD = os.getenv("PASSWORD")
 HOST = os.getenv("HOST")
@@ -16,23 +18,25 @@ PORT = os.getenv("PORT")
 DATABASE = os.getenv("PARTICIPATION_DATABASE")
 
 
-# 另一種更安全的寫法
-def get_database_url():
+def get_database_url() -> str:
     return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
 
-# 創建引擎
-url = get_database_url()
-engine = create_engine(url)  # Only needed for SQLite
+try:
+    url = get_database_url()
+    engine = create_engine(url, echo=False)  # echo=True will show all sql operation
+    with engine.connect() as connection:
+        logger.info("Database connection succeed")
 
-# 創建本地會話
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# 基礎模型
-Base = declarative_base()
+    Base = declarative_base()
+
+except Exception as e:
+    logger.error(f"database connection is failed: {e}")
+    raise
 
 
-# 依賴注入：獲取數據庫會話
 def get_db():
     db = SessionLocal()
     try:

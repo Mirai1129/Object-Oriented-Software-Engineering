@@ -17,14 +17,13 @@ HOST = os.getenv("HOST")
 PORT = os.getenv("PORT")
 DATABASE = os.getenv("ROLLCALL_DATABASE")
 
-
-def get_database_url():
+def get_database_url() -> str:
     return f"mysql+pymysql://{USERNAME}:{PASSWORD}@{HOST}:{PORT}/{DATABASE}"
 
 
 try:
     url = get_database_url()
-    engine = create_engine(url, echo=True)  # echo=True will show all sql operation
+    engine = create_engine(url, echo=False)  # echo=True will show all sql operation
 
     with engine.connect() as connection:
         logger.info("Database connection succeed")

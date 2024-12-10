@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
-from routes import rollcall, api
+from routes import api, participation, rollcall
 
 app = FastAPI()
 
-# app.include_router(participation.router)
+app.include_router(participation.router)
 app.include_router(rollcall.router)
 app.include_router(api.router)
 

@@ -1,16 +1,16 @@
-from sqlalchemy import Integer, Column, ForeignKey, String
+from sqlalchemy import Column, ForeignKey, String
+from sqlalchemy.orm import relationship
+
+from ..database import Base
 
 
-class Course:
+class Course(Base):
     __tablename__ = "Course"
 
-    course_id = Column(Integer, primary_key=True)
-    teacher_id = Column(Integer, ForeignKey('Teacher.teacher_id'))
-    name = Column(String)
-    year = Column(Integer)
+    course_id = Column(String(20), primary_key=True)
+    teacher_id = Column(String(20), ForeignKey('Teacher.id'), nullable=False)
+    name = Column(String(100), nullable=False)
+    semester = Column(String(20), nullable=False)
 
-    def edit_student_information(self):
-        pass
-
-    def edit_course_information(self):
-        pass
+    teacher = relationship("Teacher", back_populates="courses")
+    participation_grades = relationship("ParticipationGrade", back_populates="course")
