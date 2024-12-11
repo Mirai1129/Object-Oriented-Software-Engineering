@@ -174,3 +174,34 @@ class Teacher(User):
         except Exception as e:
             db.rollback()
             raise Exception(f"Error updating attendance record: {str(e)}")
+
+    def update_course_status(self, db: Session, course_id: str, status: str):
+        """
+        Update the roll-call status of a specific course in the database.
+
+        Args:
+            db (Session): The database session used to query and commit changes.
+            course_id (str): The unique identifier of the course whose status is to be updated.
+            status (str): The new roll-call status to set for the course.
+
+        Returns:
+            dict: A dictionary containing a success message if the update is successful.
+
+        Raises:
+            Exception: If any error occurs during the database update operation, an exception is raised.
+
+        Example:
+            >>> update_course_status(db, "COURSE123", "1")
+            {"message": "Course status updated."}
+        """
+        from .Course import Course
+
+        try:
+            course = db.query(Course).filter_by(course_id=course_id).first()
+            if course:
+                course.is_rollcall_opened = status
+                db.commit()
+                return {"message": "Course status updated."}
+        except Exception as e:
+            db.rollback()
+            raise Exception(f"Error updating course status: {str(e)}")

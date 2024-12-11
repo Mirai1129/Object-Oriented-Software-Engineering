@@ -89,3 +89,17 @@ async def add_new_course_endpoint(
         return response
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/updateCourseStatus")
+async def update_course_status(
+        course_id: str,
+        status: str,
+        current_user: Teacher = Depends(get_current_user),
+        db: Session = Depends(get_db)
+):
+    try:
+        result = current_user.update_course_status(db, course_id, status)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
